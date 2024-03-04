@@ -43,16 +43,53 @@ const SigninPage = () => {
 
 const { register, handleSubmit } = useForm<FormData>();
 
+// const onSubmit = async (data: FormData) => {
+//   try {
+//     const response = await apiCall.mutateAsync(data);
+
+
+    
+//     const token = response.token; 
+//     localStorage.setItem('token', token);
+//     toast.success('Login successful!');
+//     navigate("/");
+//     console.log('Registration successful');
+//   } catch (error) {
+    // console.error('Error during login', error);
+    // if (error instanceof Error) {
+    //   toast.error(`Error during login: ${error.message}`);
+    //   console.error('Error details:', error); // Log the entire error object
+    // } else {
+    //   toast.error('An unknown error occurred during login.');
+    //   console.error('Unknown error details:', error); // Log the entire error object
+    // }
+//   }
+
+// };
 const onSubmit = async (data: FormData) => {
   try {
     const response = await apiCall.mutateAsync(data);
 
-
-    
-    const token = response.token; 
+    const token = response.token;
     localStorage.setItem('token', token);
+    
+    // Fetch user details based on user ID
+    const userId = response.id;
+    const user = await axios.get(`http://localhost:8082/user/getById/${userId}`);
+
+    const isAdmin = user.data.roles.some((role:any) => role.role === "admin");
+    
+    if (isAdmin) {
+      localStorage.setItem('username', user.data.username); // Save username for admin
+      localStorage.setItem('fullname', user.data.fullName);
+      navigate("/admin/packages");
+    } else {
+      localStorage.setItem('username', user.data.username); // Save username for other users
+      localStorage.setItem('fullname', user.data.fullName);
+      navigate("/");
+    }
+
     toast.success('Login successful!');
-    navigate("/");
     console.log('Registration successful');
   } catch (error) {
     console.error('Error during login', error);

@@ -42,7 +42,7 @@ export const LocationTable = () => {
     const handleDeleteClick = async (rowData: Record<string, any>) => {
       if (
         window.confirm(
-          `Are you sure you want to delete package ${rowData.id}?`
+          `Are you sure you want to delete ${rowData.name}?`
         )
       ) {
         try {
@@ -75,7 +75,7 @@ export const LocationTable = () => {
   
 
             
-            toast.success(`Package ${rowData.packageid} deleted successfully`, {
+            toast.success(`${rowData.name} deleted successfully`, {
               position: "top-right",
             duration: 3000,
               

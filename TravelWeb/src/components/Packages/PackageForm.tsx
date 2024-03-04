@@ -29,7 +29,7 @@ export const PackageForm: React.FC = () => {
       try {
         const response = await fetch("http://localhost:8082/location/getAll");
         if (!response.ok) {
-          throw new Error("Failed to fetch categories");
+          throw new Error("Failed to fetch locations");
         }
         const data = await response.json();
         setLocations(data);

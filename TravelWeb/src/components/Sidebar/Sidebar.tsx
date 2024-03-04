@@ -1,8 +1,7 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { ChevronFirst, ChevronLast, MoreVertical } from "lucide-react";
 import { RiLogoutCircleRLine } from "react-icons/ri";
-import { useNavigate } from "react-router-dom"; 
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 interface SidebarItemProps {
   icon: React.ReactNode;
@@ -23,49 +22,26 @@ export const Sidebar: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [expanded, setExpanded] = useState(true);
-  const [userInfo, setUserInfo] = useState<{ username: string; email: string }>(
-    { username: "", email: "" }
-  );
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const response = await axios.get("http://localhost:8081/admin/dash", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        setUserInfo(response.data.UserData);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    fetchUserInfo();
-  }, []);
-
-  const handleLogout = async () => {
-    try {
-      await axios.get("http://localhost:8081/auth/logout");
-      navigate("/auth");
-    } catch (err) {
-      console.error(err);
-    }
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    // Redirect to home page
+    navigate("/login");
   };
-
   return (
     <>
       <aside className="h-screen">
         <nav className="h-full flex flex-col bg-slate-900 border-r shadow-sm">
           <div className="p-4 pb-2 flex justify-between items-center">
             <img
-              src={"src/assets/Nomad_Nook-removebg-preview.png"}
+              src={"/src/assets/logo.png"}
               className={`overflow-hidden transition-all ${
-                expanded ? "w-32" : "w-0"
+                expanded ? "w-32" : "hidden"
               }`}
               alt="Logo"
             />
+
             <button
               onClick={() => setExpanded((curr) => !curr)}
               className="p-2 rounded-sm bg-gray-500 hover:bg-gray-100"
@@ -86,14 +62,16 @@ export const Sidebar: React.FC<{ children: React.ReactNode }> = ({
               <RiLogoutCircleRLine size={25} color="white" />
               {expanded && <span className="ml-2 text-white">Logout</span>}
             </button>
-
             <div className="flex mt-3">
               <div
                 className={`w-10 h-10 rounded-md flex items-center justify-center bg-green-600 text-white`}
               >
-                {userInfo.username && (
+                {localStorage.getItem("username") && (
                   <span className="text-lg">
-                    {userInfo.username.substring(0, 2).toUpperCase()}
+                    {localStorage
+                      .getItem("username")
+                      .substring(0, 2)
+                      .toUpperCase()}
                   </span>
                 )}
               </div>
@@ -104,10 +82,10 @@ export const Sidebar: React.FC<{ children: React.ReactNode }> = ({
               >
                 <div className="leading-4">
                   <h4 className="font-semibold text-green-400">
-                    {userInfo.username}
+                    {localStorage.getItem("username")}
                   </h4>
                   <span className="text-xs text-gray-600">
-                    {userInfo.email}
+                    {localStorage.getItem("email")}
                   </span>
                 </div>
                 <MoreVertical size={20} />

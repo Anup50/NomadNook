@@ -17,6 +17,7 @@ import AdminLayout from "./layout";
 import { CiCirclePlus } from "react-icons/ci";
 import { PopupModal } from "../../components/layouts/ContainerModal";
 import { LocationTable } from "../../components/Location/LocationTable";
+import { Toaster, toast } from "sonner";
 
 interface SelectedLocation {
   name: string;
@@ -161,7 +162,8 @@ export const AdminMap: React.FC<AdminMapProps> = ({ id }) => {
           }
         );
 
-        alert(response.data.Status);
+        toast.success("location added successfully")
+
       } else {
         alert("No location selected.");
       }
@@ -229,6 +231,7 @@ export const AdminMap: React.FC<AdminMapProps> = ({ id }) => {
             className=" mt-2 p-2 px-3 bg-green-600 text-white text-center text-xl rounded hover:bg-green-700 focus:outline-none focus:ring focus:border-green-700 transition"
           >
             Set in Map
+            <Toaster className="absolute right-0 transform translate-x-16transition-transform duration-300 ease-in-out" richColors />
           </button>
         </div>
       )}
