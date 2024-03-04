@@ -29,7 +29,7 @@ public class TravelPackageServiceImpl implements TravelPackageService {
     private final LocationRepo locationRepo;
     ImageToBase64 imageToBase64 = new ImageToBase64();
 
-    private final String UPLOAD_DIRECTORY = new StringBuilder().append(System.getProperty("user.dir")).append("/packageImage").toString();
+    private final String UPLOAD_DIRECTORY = new StringBuilder().append(System.getProperty("user.dir")).append("/web_indi/packageImage").toString();
     public void savePackage(TravelPackagePojo travelPackagePojo) throws IOException {
         TravelPackage travelPackage=new TravelPackage();
 

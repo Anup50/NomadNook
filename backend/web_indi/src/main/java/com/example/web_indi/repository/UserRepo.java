@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepo extends JpaRepository<User,Long> {
-        @Query(value = "select * from users where email=?1", nativeQuery = true)
+        @Query(value = "select * from users where id=?1", nativeQuery = true)
 
         Optional<User> getUserById(Long id);
         Optional<User>  getUserByEmail(String email);

@@ -35,6 +35,8 @@ public class AuthenticateServiceImpl implements AuthenticateService {
 
         User user= userRepo.getUserByEmail(authenticateRequest.getEmail())
                 .orElseThrow(() -> new EntityNotFoundException("User not found."));
+
+
         UserDetails userDetails = (UserDetails) user;
         String jwtToken = jwtService.generateToken(userDetails);
         return AuthenticateResponse.builder().token(jwtToken).id(user.getId()).build();

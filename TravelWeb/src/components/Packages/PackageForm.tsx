@@ -4,12 +4,17 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import { toast, Toaster } from "sonner";
 
-export const PackageForm : React.FC = () => {
-  const [imagePreview, setImagePreview] = useState<string[][]>([[], [], [], []]);
+export const PackageForm: React.FC = () => {
+  const [imagePreview, setImagePreview] = useState<string[][]>([
+    [],
+    [],
+    [],
+    [],
+  ]);
 
   const [locations, setLocations] = useState<
-  { locationId: number; location: string }[]
->([]);
+    { locationId: number; location: string }[]
+  >([]);
   const { register, handleSubmit, watch, reset } = useForm();
   const selectedLocation = watch("locationId");
   const watchedimage1 = watch("image!");
@@ -17,12 +22,12 @@ export const PackageForm : React.FC = () => {
   const watchedimage3 = watch("image!");
   const watchedimage4 = watch("image!");
 
+  
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch(
-          "http://localhost:8082/location/getAll"
-        );
+        const response = await fetch("http://localhost:8082/location/getAll");
         if (!response.ok) {
           throw new Error("Failed to fetch categories");
         }
@@ -50,9 +55,12 @@ export const PackageForm : React.FC = () => {
       handleFileInputChange(watchedimage4, "image4", 3);
     }
   }, [watchedimage1, watchedimage2, watchedimage3, watchedimage4]);
-  
 
-  const handleFileInputChange = (files: FileList, fieldName: string, index: number) => {
+  const handleFileInputChange = (
+    files: FileList,
+    fieldName: string,
+    index: number
+  ) => {
     const previews = Array.from(files).map((file) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
@@ -62,27 +70,30 @@ export const PackageForm : React.FC = () => {
         };
       });
     });
-  
+
     Promise.all(previews).then((previewUrls) => {
-      setImagePreview(prevState => {
+      setImagePreview((prevState) => {
         const newState = [...prevState];
         newState[index] = previewUrls;
         return newState;
       });
     });
   };
-  
 
   const useApiCall = useMutation({
     mutationKey: ["POST_Package_MANAGEPackage"],
     mutationFn: async (formData: FormData) => {
       try {
+        // Log the token
+        const token = localStorage.getItem("token");
+        console.log("Access Token:", token);
+
         const response = await axios.post(
           "http://localhost:8082/package/save",
           formData,
           {
             headers: {
-              authorization: "Bearer " + localStorage.getItem("accessToken"),
+              authorization: "Bearer " + token,
               "Content-Type": "multipart/form-data",
             },
           }
@@ -106,27 +117,27 @@ export const PackageForm : React.FC = () => {
     }
 
     const formDataWithFile = new FormData();
-    formDataWithFile.append('packageTitle', formData.packageTitle);
-    formDataWithFile.append('locationId',formData.locationId);
-    formDataWithFile.append('about',formData.about);
-    formDataWithFile.append('duration', String(formData.duration));
-    formDataWithFile.append('guidanceLanguage',formData.guidanceLanguage);
-    formDataWithFile.append('whatsIncluded',formData.whatsIncluded);
-    formDataWithFile.append('whatToExpect',formData.whatToExpect);
-    formDataWithFile.append('departureAndReturn',formData.departureAndReturn);
-    formDataWithFile.append('accessibility',formData.accessibility);
-    formDataWithFile.append('additionalInfo',formData.additionalInfo);
-    formDataWithFile.append('price', String(formData.price));
-    formDataWithFile.append('discount', String(formData.discount));
+    formDataWithFile.append("packageTitle", formData.packageTitle);
+    formDataWithFile.append("locationId", formData.locationId);
+    formDataWithFile.append("about", formData.about);
+    formDataWithFile.append("duration", String(formData.duration));
+    formDataWithFile.append("guidanceLanguage", formData.guidanceLanguage);
+    formDataWithFile.append("whatsIncluded", formData.whatsIncluded);
+    formDataWithFile.append("whatToExpect", formData.whatToExpect);
+    formDataWithFile.append("departureAndReturn", formData.departureAndReturn);
+    formDataWithFile.append("accessibility", formData.accessibility);
+    formDataWithFile.append("additionalInfo", formData.additionalInfo);
+    formDataWithFile.append("price", String(formData.price));
+    formDataWithFile.append("discount", String(formData.discount));
     formDataWithFile.append("image1", formData.image1[0]);
     if (formData.image2 && formData.image2.length > 0) {
       formDataWithFile.append("image2", formData.image2[0]);
     }
-  
+
     if (formData.image3 && formData.image3.length > 0) {
       formDataWithFile.append("image3", formData.image3[0]);
     }
-  
+
     if (formData.image4 && formData.image4.length > 0) {
       formDataWithFile.append("image4", formData.image4[0]);
     }
@@ -137,195 +148,300 @@ export const PackageForm : React.FC = () => {
   return (
     <div className=" flex flex-col items-center w-full h-[91.2%] overflow-y-auto  ">
       <span className="text-main text-4xl text-center font-bold ">
-        Add Dish
+        Add Package
       </span>
       <form
         className="flex flex-col gap-10 bg-white py-20 w-full"
         onSubmit={handleSubmit(onSubmit)}
       >
-        <div className="flex justify-center items-center name gap-5">
+        <div className="flex justify-start px-44 items-start name gap-5">
           <label className="text-xl text-slate-500">Package Name:</label>
           <input
             type="text"
-            className="w-[60%] text-lg p-1 bg-slate-100 border rounded focus:border-2 focus:border-main focus:outline-none "
+            className="w-[70%] text-lg p-1 mx-[6%] bg-slate-100 border rounded focus:border-2 focus:border-main focus:outline-none  "
             {...register("packageTitle")}
           />
         </div>
-        <div className="flex justify-center items-center name gap-5">
-          <label className="text-xl text-slate-500">Departure and Return:</label>
+        <div className="flex justify-start px-44 items-center name gap-5">
+          <label className="text-xl text-slate-500">
+            Departure and Return:
+          </label>
           <input
             type="text"
-            className="w-[60%] text-lg p-1 bg-slate-100 border rounded focus:border-2 focus:border-main focus:outline-none "
+            className="w-[70%] text-lg p-1 bg-slate-100 border rounded focus:border-2 focus:border-main focus:outline-none mr-4 "
             {...register("departureAndReturn")}
           />
         </div>
-        <div className="flex justify-center items-center name gap-5">
-          <label className="text-xl text-slate-500">Dish Name:</label>
-         
+        <div className="flex justify-start px-44 items-center name gap-5">
+          <label className="text-xl text-slate-500">Location:</label>
 
-          <select className="w-[60%] p-2" {...register("locationId")}>
+          <select className="w-[100%] p-2 mx-[11.5%]" {...register("locationId")}>
             {locations.map((location) => (
               <option key={location.locationId} value={location.locationId}>
                 {location.location}
               </option>
             ))}
           </select>
-          
         </div>
-        <div className="flex justify-center items-center name gap-5">
+        <div className="flex justify-start px-44 items-center name gap-5">
           <label className="text-xl text-slate-500 mr-16">About:</label>
           <textarea
-
-            className="w-[60%] text-lg p-1 bg-slate-100 border rounded focus:border-2 focus:border-main focus:outline-none "
+            className="w-[70%] text-lg p-1 mx-[8%] bg-slate-100 border rounded focus:border-2 focus:border-main focus:outline-none  "
             {...register("about")}
           />
         </div>
-        <div className="flex justify-center items-center name gap-5">
+        <div className="flex justify-start px-44 items-center name gap-5">
           <label className="text-xl text-slate-500 mr-16">Duration:</label>
           <input
             type="number"
-            className="w-[60%] text-lg p-1 bg-slate-100 border rounded focus:border-2 focus:border-main focus:outline-none "
+            className="w-[70%] text-lg p-1 mx-[5.5%] bg-slate-100 border rounded focus:border-2 focus:border-main focus:outline-none justify-end "
             {...register("duration")}
           />
         </div>
-        <div className="flex w-full size-auto ml-60 gap-1 items-center">
-          <label className="text-xl text-slate-500 mr-4">Image1:</label>
-          <input
-            className=" cursor-pointer"
-            type="file"
-            accept="image/*"
-            {...register("image1")}
-          />
-          <div>
+        {/* Image Previews */}
+
+        {imagePreview && (
+          <div className="flex ml-72 gap-1 flex-row">
             {imagePreview.map((preview, index) => (
-              <img
+              <div
                 key={index}
-                src={preview}
-                alt={`Preview-${index}`}
-                className="mr-2 border border-gray-300 rounded-sm"
-                style={{ width: "100px", height: "100px" }}
-              />
+                className="flex items-center mr-2 border border-gray-300 rounded-sm"
+              >
+                {preview.map((img, imgIndex) => (
+                  <img
+                    key={imgIndex} // Ensure unique key for each image
+                    src={img}
+                    alt={`Preview-${index}-${imgIndex}`}
+                    className="mr-2 border border-gray-300 rounded-sm flex items-center"
+                    style={{ width: "100px", height: "100px" }}
+                  />
+                ))}
+              </div>
             ))}
           </div>
-        </div>
-         {/* Image 2 */}
-      <div className="flex w-full size-auto ml-60 gap-1 items-center">
-        <label className="text-xl text-slate-500 mr-4">Image 2:</label>
-        <input
-          className="cursor-pointer"
-          type="file"
-          accept="image/*"
-          {...register("image2")}
-        />
-        <div className="flex">
-          {imagePreview[1].map((preview, index) => (
-            <img
-              key={index}
-              src={preview}
-              alt={`Preview-2-${index}`}
-              className="mr-2 border border-gray-300 rounded-sm"
-              style={{ width: "100px", height: "100px" }}
-            />
-          ))}
-        </div>
-      </div>
+        )}
 
-      {/* Image 3 */}
-      <div className="flex w-full size-auto ml-60 gap-1 items-center">
-        <label className="text-xl text-slate-500 mr-4">Image 3:</label>
-        <input
-          className="cursor-pointer"
-          type="file"
-          accept="image/*"
-          {...register("image3")}
-        />
-        <div className="flex">
-          {imagePreview[2].map((preview, index) => (
-            <img
-              key={index}
-              src={preview}
-              alt={`Preview-3-${index}`}
-              className="mr-2 border border-gray-300 rounded-sm"
-              style={{ width: "100px", height: "100px" }}
-            />
-          ))}
-        </div>
-      </div>
+        {/* Image Upload Form */}
+        <div className="flex w-full size-auto px-44 gap-1 items-center">
+          <label className="text-xl text-slate-500 mr-4">Image 1:</label>
+          <input
+            className="cursor-pointer  mx-[12%]"
+            type="file"
+            accept="image/*"
+            
+            {...register("image1", {
+              onChange: (event) => {
+                
+                const updatedPreview = [...imagePreview[0]];
 
-      {/* Image 4 */}
-      <div className="flex w-full size-auto ml-60 gap-1 items-center">
-        <label className="text-xl text-slate-500 mr-4">Image 4:</label>
-        <input
-          className="cursor-pointer"
-          type="file"
-          accept="image/*"
-          {...register("image4")}
-        />
-        <div className="flex">
-          {imagePreview[3].map((preview, index) => (
-            <img
-              key={index}
-              src={preview}
-              alt={`Preview-4-${index}`}
-              className="mr-2 border border-gray-300 rounded-sm"
-              style={{ width: "100px", height: "100px" }}
-            />
-          ))}
+                
+                if (event.target.files && event.target.files[0]) {
+                  const file = event.target.files[0];
+                  const allowedMimeTypes = ["image/jpeg", "image/png"]; // Adjust as needed
+                  if (!allowedMimeTypes.includes(file.type)) {
+                    alert(
+                      "Invalid file type. Please select an image (JPEG or PNG)."
+                    );
+                    return; 
+                  }
+
+                 
+                  const reader = new FileReader();
+                  reader.onload = (e?) => {
+                    updatedPreview.push(e?.target?.result);
+                    
+                    setImagePreview([updatedPreview]);
+                  };
+                  reader.onerror = (error) => {
+                    console.error("Error creating image URL:", error);
+                    
+                  };
+                  reader.readAsDataURL(file);
+                } else {
+                  console.warn("No file selected for Image 1.");
+                }
+              },
+            })}
+          />
         </div>
-      </div>
-        <div className="flex justify-center items-center name gap-5">
-          <label className="text-xl text-slate-500 mr-16">Guidance Language:</label>
+
+        <div className="flex w-full size-auto px-44 gap-1 items-center">
+          <label className="text-xl text-slate-500 mr-4">Image 2:</label>
+          <input
+            className="cursor-pointer mx-[12%]"
+            type="file"
+            accept="image/*"
+            {...register("image2", {
+              onChange: (event) => {
+                const updatedPreview = [...imagePreview[0]];
+
+                
+                if (event.target.files && event.target.files[0]) {
+                  const file = event.target.files[0];
+                  const allowedMimeTypes = ["image/jpeg", "image/png"]; // Adjust as needed
+                  if (!allowedMimeTypes.includes(file.type)) {
+                    alert(
+                      "Invalid file type. Please select an image (JPEG or PNG)."
+                    );
+                    return; 
+                  }
+
+                 
+                  const reader = new FileReader();
+                  reader.onload = (e) => {
+                    updatedPreview.push(e?.target?.result);
+                    
+                    setImagePreview([updatedPreview]);
+                  };
+                  reader.onerror = (error) => {
+                    console.error("Error creating image URL:", error);
+                    
+                  };
+                  reader.readAsDataURL(file);
+                } else {
+                  console.warn("No file selected for Image 2.");
+                }
+              },
+            })}
+          />
+        </div>
+        <div className="flex w-full size-auto px-44 gap-1 items-center">
+          <label className="text-xl text-slate-500 mr-4">Image 3:</label>
+          <input
+            className="cursor-pointer mx-[12%]"
+            type="file"
+            accept="image/*"
+            {...register("image3", {
+              onChange: (event) => {
+                const updatedPreview = [...imagePreview[0]];
+
+                
+                if (event.target.files && event.target.files[0]) {
+                  const file = event.target.files[0];
+                  const allowedMimeTypes = ["image/jpeg", "image/png"]; // Adjust as needed
+                  if (!allowedMimeTypes.includes(file.type)) {
+                    alert(
+                      "Invalid file type. Please select an image (JPEG or PNG)."
+                    );
+                    return; 
+                  }
+
+                 
+                  const reader = new FileReader();
+                  reader.onload = (e) => {
+                    updatedPreview.push(e?.target?.result);
+                    
+                    setImagePreview([updatedPreview]);
+                  };
+                  reader.onerror = (error) => {
+                    console.error("Error creating image URL:", error);
+                    
+                  };
+                  reader.readAsDataURL(file);
+                } else {
+                  console.warn("No file selected for Image 1.");
+                }
+              },
+            })}
+          />
+        </div>
+        <div className="flex w-full size-auto px-44 gap-1 items-center">
+          <label className="text-xl text-slate-500 mr-4">Image 4:</label>
+          <input
+            className="cursor-pointer mx-[12%]"
+            type="file"
+            accept="image/*"
+            {...register("image4", {
+              onChange: (event) => {
+                const updatedPreview = [...imagePreview[0]];
+
+                
+                if (event.target.files && event.target.files[0]) {
+                  const file = event.target.files[0];
+                  const allowedMimeTypes = ["image/jpeg", "image/png"]; // Adjust as needed
+                  if (!allowedMimeTypes.includes(file.type)) {
+                    alert(
+                      "Invalid file type. Please select an image (JPEG or PNG)."
+                    );
+                    return; 
+                  }
+
+                 
+                  const reader = new FileReader();
+                  reader.onload = (e) => {
+                    updatedPreview.push(e?.target?.result);
+                    
+                    setImagePreview([updatedPreview]);
+                  };
+                  reader.onerror = (error) => {
+                    console.error("Error creating image URL:", error);
+                    
+                  };
+                  reader.readAsDataURL(file);
+                } else {
+                  console.warn("No file selected for Image 1.");
+                }
+              },
+            })}
+          />
+        </div>
+
+        <div className="flex justify-start px-44 items-center name gap-5">
+          <label className="text-xl text-slate-500 mr-16">
+            Guidance Language:
+          </label>
           <textarea
-
-            className="w-[60%] text-lg p-1 bg-slate-100 border rounded focus:border-2 focus:border-main focus:outline-none "
+            className="w-[70%] text-lg p-1 -mx-[4%] bg-slate-100 border rounded focus:border-2 focus:border-main focus:outline-none "
             {...register("guidanceLanguage")}
           />
         </div>
-        <div className="flex justify-center items-center name gap-5">
-          <label className="text-xl text-slate-500 mr-16">Whats Included:</label>
+        <div className="flex justify-start px-44 items-center name gap-5">
+          <label className="text-xl text-slate-500 mr-16">
+            Whats Included:
+          </label>
           <textarea
-
-            className="w-[60%] text-lg p-1 bg-slate-100 border rounded focus:border-2 focus:border-main focus:outline-none "
+            className="w-[70%] text-lg p-1 bg-slate-100 border rounded focus:border-2 focus:border-main focus:outline-none "
             {...register("whatsIncluded")}
           />
         </div>
-        <div className="flex justify-center items-center name gap-5">
-          <label className="text-xl text-slate-500 mr-16">What To Expect:</label>
+        <div className="flex justify-start px-44 items-center name gap-5">
+          <label className="text-xl text-slate-500 mr-16">
+            What To Expect:
+          </label>
           <textarea
-
-            className="w-[60%] text-lg p-1 bg-slate-100 border rounded focus:border-2 focus:border-main focus:outline-none "
+            className="w-[70%] text-lg p-1 bg-slate-100 border rounded focus:border-2 focus:border-main focus:outline-none "
             {...register("whatToExpect")}
           />
         </div>
-        <div className="flex justify-center items-center name gap-5">
+        <div className="flex justify-start px-44 items-center name gap-5">
           <label className="text-xl text-slate-500 mr-16">Accessibility</label>
           <textarea
-
-            className="w-[60%] text-lg p-1 bg-slate-100 border rounded focus:border-2 focus:border-main focus:outline-none "
+            className="w-[70%] text-lg p-1 mx-[3%] bg-slate-100 border rounded focus:border-2 focus:border-main focus:outline-none "
             {...register("accessibility")}
           />
         </div>
-        <div className="flex justify-center items-center name gap-5">
-          <label className="text-xl text-slate-500 mr-16">Additional Info</label>
+        <div className="flex justify-start px-44 items-center name gap-5">
+          <label className="text-xl text-slate-500 mr-16">
+            Additional Info
+          </label>
           <textarea
-
-            className="w-[60%] text-lg p-1 bg-slate-100 border rounded focus:border-2 focus:border-main focus:outline-none "
+            className="w-[70%] text-lg p-1 bg-slate-100 border rounded focus:border-2 focus:border-main focus:outline-none "
             {...register("additionalInfo")}
           />
         </div>
-        <div className="flex justify-center items-center name gap-5">
+        <div className="flex justify-start px-44 items-center name gap-5">
           <label className="text-xl text-slate-500 mr-16">Price:</label>
           <input
             type="number"
-            className="w-[60%] text-lg p-1 bg-slate-100 border rounded focus:border-2 focus:border-main focus:outline-none "
+            className="w-[70%] text-lg p-1 mx-[8%] bg-slate-100 border rounded focus:border-2 focus:border-main focus:outline-none "
             {...register("price")}
           />
         </div>
-        <div className="flex justify-center items-center name gap-5">
+        <div className="flex justify-start px-44 items-center name gap-5">
           <label className="text-xl text-slate-500 mr-16">Discount:</label>
           <input
             type="number"
-            className="w-[60%] text-lg p-1 bg-slate-100 border rounded focus:border-2 focus:border-main focus:outline-none "
+            className="w-[70%] mx-[5%] text-lg p-1 bg-slate-100 border rounded focus:border-2 focus:border-main focus:outline-none "
             {...register("discount")}
           />
         </div>
@@ -335,7 +451,7 @@ export const PackageForm : React.FC = () => {
             className="px-5 py-3 bg-blue-500 text-white font-semibold text-xl hover:bg-yellow-400 focus:outline-none focus:border-yellow-400 transition"
             type={"submit"}
           >
-            Add dish
+            Add Package
             <Toaster
               className="absolute right-0 transform translate-x-16 transition-transform duration-300 ease-in-out"
               richColors
@@ -346,4 +462,3 @@ export const PackageForm : React.FC = () => {
     </div>
   );
 };
-

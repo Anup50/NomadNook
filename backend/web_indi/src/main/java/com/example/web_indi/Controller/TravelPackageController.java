@@ -20,7 +20,7 @@ public class TravelPackageController {
     @PostMapping("/save")
     public String savePackage(@RequestBody @ModelAttribute TravelPackagePojo travelPackagePojo) throws IOException {
         travelPackageService.savePackage(travelPackagePojo);
-        return "data created successfully yoh";
+        return "data created successfully";
     }
     @GetMapping("/getAll")
     public List<TravelPackage> findAll(){

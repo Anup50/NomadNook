@@ -36,45 +36,31 @@ public class SpringSecurityConfig {
         return config.getAuthenticationManager();
     }
 
-
     @Bean
-//    protected SecurityFilterChain filterChain(HttpSecurity httpSecurity)
-//            throws Exception {
-//        httpSecurity
-//                .csrf().disable()
-//                .authorizeHttpRequests()
-//                .requestMatchers("/authenticate","/user/signup" ,"/public-resource","/product/**","/cart/getAll",
-//                        "/location/addLocation",
-//                        "/package/save").permitAll()
-//
-//                .requestMatchers("/product/**")
-//                .hasAuthority("Admin")
-//                .anyRequest()
-//                .authenticated()
-//                .and()
-//                .sessionManagement()
-//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                .and()
-//                .authenticationProvider(authenticationProvider())
-//                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-//
-//        return httpSecurity.build();
-//    }
     protected SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-                .cors().and()
                 .csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .requestMatchers("/authenticate", "/user/**", "/user/update/{id}", "/brand/**", "/location/**", "/package/**", "/user/**").permitAll() // Add /package/save to permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .requestMatchers("/authenticate", "/user/**", "/public-resource", "/location/**")
+                .permitAll()
+                .requestMatchers(HttpMethod.GET, "/package/**")
+                .permitAll()
+                .requestMatchers(HttpMethod.POST, "/package/**").hasAuthority("admin") // Chain multiple requestMatchers
+                .requestMatchers(HttpMethod.PUT, "/package/**").hasAuthority("admin")
+                .requestMatchers(HttpMethod.DELETE, "/package/**").hasAuthority("admin")
+                .requestMatchers("/package/**")
+                .hasAuthority("admin")
+                .anyRequest()
+                .authenticated()
                 .and()
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+        // ... rest of your configuration
+
         return httpSecurity.build();
     }
+
 
 
 }

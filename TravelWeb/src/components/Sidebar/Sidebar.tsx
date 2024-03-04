@@ -60,7 +60,7 @@ export const Sidebar: React.FC<{ children: React.ReactNode }> = ({
         <nav className="h-full flex flex-col bg-slate-900 border-r shadow-sm">
           <div className="p-4 pb-2 flex justify-between items-center">
             <img
-              src={"/assets/logos/logo.png"}
+              src={"src/assets/Nomad_Nook-removebg-preview.png"}
               className={`overflow-hidden transition-all ${
                 expanded ? "w-32" : "w-0"
               }`}

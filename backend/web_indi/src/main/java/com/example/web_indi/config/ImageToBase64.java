@@ -9,7 +9,7 @@ import java.util.Base64;
 public class ImageToBase64 {
 
     public String getImageBase64(String fileName) {
-        String filePath = System.getProperty("user.dir");
+        String filePath = System.getProperty("user.dir")+ "/web_indi/";
         File file = new File(filePath + fileName);
         byte[] bytes = new byte[0];
         try {
